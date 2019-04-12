@@ -1,11 +1,11 @@
 /* ControlDeskEvent.java
  *
  *  Version:
- *  		$Id$
- * 
+ *          $Id$
+ *
  *  Revisions:
- * 		$Log$
- * 
+ *      $Log$
+ *
  */
 
 /**
@@ -17,8 +17,8 @@ import java.util.*;
 
 public class ControlDeskEvent {
 
-	/** A representation of the wait queue, containing party names */
-	private Vector partyQueue;
+    /** A representation of the wait queue, containing party names */
+    private Vector partyQueue;
 
     /**
      * Contstructor for the ControlDeskEvent
@@ -27,9 +27,9 @@ public class ControlDeskEvent {
      *
      */
 
-	public ControlDeskEvent( Vector partyQueue ) {
-		this.partyQueue = partyQueue;
-	}
+    public ControlDeskEvent( Vector partyQueue ){
+        this.partyQueue = partyQueue;
+    }
 
     /**
      * Accessor for partyQueue
@@ -39,8 +39,8 @@ public class ControlDeskEvent {
      *
      */
 
-	public Vector getPartyQueue() {
-		return partyQueue;
-	}
+    public Vector getPartyQueue(){
+        return partyQueue;
+    }
 
 }

@@ -2,10 +2,10 @@
  *
  *  Version
  *  $Id$
- * 
+ *
  *  Revisions:
- * 		$Log$
- * 
+ *      $Log$
+ *
  */
 
 /**
@@ -15,6 +15,6 @@
 
 public interface ControlDeskObserver {
 
-	public void receiveControlDeskEvent(ControlDeskEvent ce);
+    public void receiveControlDeskEvent(ControlDeskEvent ce);
 
 }
