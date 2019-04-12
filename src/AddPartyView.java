@@ -1,28 +1,5 @@
-/* AddPartyView.java
- *
- *  Version:
- *       $Id$
- *
- *  Revisions:
- *      $Log: AddPartyView.java,v $
- *      Revision 1.7  2003/02/20 02:05:53  ???
- *      Fixed addPatron so that duplicates won't be created.
- *
- *      Revision 1.6  2003/02/09 20:52:46  ???
- *      Added comments.
- *
- *      Revision 1.5  2003/02/02 17:42:09  ???
- *      Made updates to migrate to observer model.
- *
- *      Revision 1.4  2003/02/02 16:29:52  ???
- *      Added ControlDeskEvent and ControlDeskObserver. Updated Queue to allow access to Vector so that contents could be viewed without destroying. Implemented observer model for most of ControlDesk.
- *
- *
- */
-
 /**
- * Class for GUI components need to add a party
- *
+ * Class for GUI components need to add a party.
  */
 
 import java.awt.*;
@@ -32,15 +9,8 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import java.util.*;
-import java.text.*;
-
-/**
- * Constructor for GUI used to Add Parties to the waiting party queue.
- *
- */
 
 public class AddPartyView implements ActionListener, ListSelectionListener {
-
     private int maxSize;
 
     private JFrame win;
@@ -53,36 +23,42 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 
     private String selectedNick, selectedMember;
 
-    public AddPartyView(ControlDeskView controlDesk, int max){
-
+    /**
+     * Constructor of the AddPartyView class.
+     *
+     * @param controlDesk the main control desk view.
+     * @param max the max size of the party.
+     */
+    public AddPartyView(ControlDeskView controlDesk,int max){
         this.controlDesk = controlDesk;
-        maxSize = max;
+        this.maxSize = max;
 
-        win = new JFrame("Add Party");
-        win.getContentPane().setLayout(new BorderLayout());
-        ((JPanel) win.getContentPane()).setOpaque(false);
+        // Create the frame.
+        this.win = new JFrame("Add Party");
+        this.win.getContentPane().setLayout(new BorderLayout());
+        ((JPanel) this.win.getContentPane()).setOpaque(false);
 
         JPanel colPanel = new JPanel();
         colPanel.setLayout(new GridLayout(1, 3));
 
-        // Party Panel
+        // Create the party Panel
         JPanel partyPanel = new JPanel();
         partyPanel.setLayout(new FlowLayout());
         partyPanel.setBorder(new TitledBorder("Your Party"));
 
-        party = new Vector();
+        this.party = new Vector();
         Vector empty = new Vector();
         empty.add("(Empty)");
 
-        partyList = new JList(empty);
-        partyList.setFixedCellWidth(120);
-        partyList.setVisibleRowCount(5);
-        partyList.addListSelectionListener(this);
+        // Create the list.
+        this.partyList = new JList(empty);
+        this.partyList.setFixedCellWidth(120);
+        this.partyList.setVisibleRowCount(5);
+        this.partyList.addListSelectionListener(this);
         JScrollPane partyPane = new JScrollPane(partyList);
-        //        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         partyPanel.add(partyPane);
 
-        // Bowler Database
+        // Create the bowler data view.
         JPanel bowlerPanel = new JPanel();
         bowlerPanel.setLayout(new FlowLayout());
         bowlerPanel.setBorder(new TitledBorder("Bowler Database"));
@@ -93,139 +69,138 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
             System.err.println("File Error");
             bowlerdb = new Vector();
         }
-        allBowlers = new JList(bowlerdb);
-        allBowlers.setVisibleRowCount(8);
-        allBowlers.setFixedCellWidth(120);
-        JScrollPane bowlerPane = new JScrollPane(allBowlers);
+        this.allBowlers = new JList(this.bowlerdb);
+        this.allBowlers.setVisibleRowCount(8);
+        this.allBowlers.setFixedCellWidth(120);
+        JScrollPane bowlerPane = new JScrollPane(this.allBowlers);
         bowlerPane.setVerticalScrollBarPolicy(
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        allBowlers.addListSelectionListener(this);
+        this.allBowlers.addListSelectionListener(this);
         bowlerPanel.add(bowlerPane);
 
-        // Button Panel
+        // BCreate the button panel.
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(4, 1));
 
-        Insets buttonMargin = new Insets(4, 4, 4, 4);
-
-        addPatron = new JButton("Add to Party");
+        this.addPatron = new JButton("Add to Party");
         JPanel addPatronPanel = new JPanel();
         addPatronPanel.setLayout(new FlowLayout());
-        addPatron.addActionListener(this);
-        addPatronPanel.add(addPatron);
+        this.addPatron.addActionListener(this);
+        addPatronPanel.add(this.addPatron);
 
-        remPatron = new JButton("Remove Member");
+        this.remPatron = new JButton("Remove Member");
         JPanel remPatronPanel = new JPanel();
         remPatronPanel.setLayout(new FlowLayout());
-        remPatron.addActionListener(this);
-        remPatronPanel.add(remPatron);
+        this.remPatron.addActionListener(this);
+        remPatronPanel.add(this.remPatron);
 
-        newPatron = new JButton("New Patron");
+        this.newPatron = new JButton("New Patron");
         JPanel newPatronPanel = new JPanel();
         newPatronPanel.setLayout(new FlowLayout());
-        newPatron.addActionListener(this);
-        newPatronPanel.add(newPatron);
+        this.newPatron.addActionListener(this);
+        newPatronPanel.add(this.newPatron);
 
-        finished = new JButton("Finished");
+        this.finished = new JButton("Finished");
         JPanel finishedPanel = new JPanel();
         finishedPanel.setLayout(new FlowLayout());
-        finished.addActionListener(this);
-        finishedPanel.add(finished);
+        this.finished.addActionListener(this);
+        finishedPanel.add(this.finished);
 
         buttonPanel.add(addPatronPanel);
         buttonPanel.add(remPatronPanel);
         buttonPanel.add(newPatronPanel);
         buttonPanel.add(finishedPanel);
 
-        // Clean up main panel
+        // Clean up main panel.
         colPanel.add(partyPanel);
         colPanel.add(bowlerPanel);
         colPanel.add(buttonPanel);
 
-        win.getContentPane().add("Center", colPanel);
+        this.win.getContentPane().add("Center", colPanel);
+        this.win.pack();
 
-        win.pack();
-
-        // Center Window on Screen
+        // Center  the window on the screen
         Dimension screenSize = (Toolkit.getDefaultToolkit()).getScreenSize();
-        win.setLocation(
+        this.win.setLocation(
             ((screenSize.width) / 2) - ((win.getSize().width) / 2),
             ((screenSize.height) / 2) - ((win.getSize().height) / 2));
-        win.show();
+        this.win.show();
 
     }
 
+    /**
+     * Performs an action when a button is pressed.
+     *
+     * @param e the event that occurred.
+     */
     public void actionPerformed(ActionEvent e){
-        if (e.getSource().equals(addPatron)) {
-            if (selectedNick != null && party.size() < maxSize) {
-                if (party.contains(selectedNick)) {
+        if (e.getSource().equals(this.addPatron)) {
+            if (this.selectedNick != null && this.party.size() < this.maxSize) {
+                if (this.party.contains(selectedNick)) {
                     System.err.println("Member already in Party");
                 } else {
-                    party.add(selectedNick);
-                    partyList.setListData(party);
+                    this.party.add(this.selectedNick);
+                    this.partyList.setListData(this.party);
                 }
             }
         }
-        if (e.getSource().equals(remPatron)) {
-            if (selectedMember != null) {
-                party.removeElement(selectedMember);
-                partyList.setListData(party);
+        if (e.getSource().equals(this.remPatron)) {
+            if (this.selectedMember != null) {
+                this.party.removeElement(this.selectedMember);
+                this.partyList.setListData(this.party);
             }
         }
-        if (e.getSource().equals(newPatron)) {
+        if (e.getSource().equals(this.newPatron)) {
             NewPatronView newPatron = new NewPatronView( this );
         }
-        if (e.getSource().equals(finished)) {
-            if ( party != null && party.size() > 0) {
-                controlDesk.updateAddParty( this );
+        if (e.getSource().equals(this.finished)) {
+            if ( this.party != null && this.party.size() > 0) {
+                this.controlDesk.updateAddParty( this );
             }
-            win.hide();
+            this.win.hide();
         }
 
     }
 
-/**
- * Handler for List actions
- * @param e the ListActionEvent that triggered the handler
- */
-
+    /**
+     * Handler for List actions.
+     *
+     * @param e the ListActionEvent that triggered the handler.
+     */
     public void valueChanged(ListSelectionEvent e){
-        if (e.getSource().equals(allBowlers)) {
-            selectedNick =
-                ((String) ((JList) e.getSource()).getSelectedValue());
+        if (e.getSource().equals(this.allBowlers)) {
+            this.selectedNick = ((String) ((JList) e.getSource()).getSelectedValue());
         }
-        if (e.getSource().equals(partyList)) {
-            selectedMember =
-                ((String) ((JList) e.getSource()).getSelectedValue());
+        if (e.getSource().equals(this.partyList)) {
+            this.selectedMember = ((String) ((JList) e.getSource()).getSelectedValue());
         }
     }
 
-/**
- * Accessor for Party
- */
-
+    /**
+     * Returns the names part of the party.
+     */
     public Vector getNames(){
-        return party;
+        return this.party;
     }
 
-/**
- * Called by NewPatronView to notify AddPartyView to update
- *
- * @param newPatron the NewPatronView that called this method
- */
-
+    /**
+     * Called by NewPatronView to notify AddPartyView to update.
+     *
+     * @param newPatron the NewPatronView that called this method.
+     */
     public void updateNewPatron(NewPatronView newPatron){
         try {
             Bowler checkBowler = BowlerFile.getBowlerInfo( newPatron.getNick() );
             if ( checkBowler == null ) {
+                // Add the bowler info.
                 BowlerFile.putBowlerInfo(
                     newPatron.getNick(),
                     newPatron.getFull(),
                     newPatron.getEmail());
-                bowlerdb = new Vector(BowlerFile.getBowlers());
-                allBowlers.setListData(bowlerdb);
-                party.add(newPatron.getNick());
-                partyList.setListData(party);
+                this.bowlerdb = new Vector(BowlerFile.getBowlers());
+                this.allBowlers.setListData(this.bowlerdb);
+                this.party.add(newPatron.getNick());
+                this.partyList.setListData(this.party);
             } else {
                 System.err.println( "A Bowler with that name already exists." );
             }
@@ -234,12 +209,10 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
         }
     }
 
-/**
- * Accessor for Party
- */
-
+    /**
+     * Returns the party.
+     */
     public Vector getParty(){
         return party;
     }
-
 }
