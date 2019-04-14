@@ -136,28 +136,33 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Date;
 
+/**
+ * This class represents the entirety of a single late. Keeps track of each turn made,
+ * the current players, the status of the game, and all sorts of other stuff. This is too big a class.
+ * Will be refactored into a pattern and subclasses to remove the work this class does
+ */
 public class Lane extends Thread implements PinsetterObserver {
-    private Party party;
-    private Pinsetter setter;
-    private HashMap scores;
-    private Vector subscribers;
+    private Party party; //the party that is using this lane
+    private Pinsetter setter; // the setter object that is part of this lane
+    private HashMap scores; //the scores of each player in this lane
+    private Vector subscribers; //the GUI subscribers that this method updates
 
-    private boolean gameIsHalted;
+    private boolean gameIsHalted; //whether the game is halted or not
 
-    private boolean partyAssigned;
-    private boolean gameFinished;
-    private Iterator bowlerIterator;
-    private int ball;
+    private boolean partyAssigned; //whether the lane is occupied or not
+    private boolean gameFinished; //whether the game is ended or not
+    private Iterator bowlerIterator; //the iterator that moves through each bowler
+    private int ball; //the ball that is being thrown down the lane
     private int bowlIndex;
-    private int frameNumber;
-    private boolean tenthFrameStrike;
+    private int frameNumber; //the frame that the current game is in
+    private boolean tenthFrameStrike; //whether the frame has been a strike or not
 
-    private int[] curScores;
-    private int[][] cumulScores;
-    private boolean canThrowAgain;
+    private int[] curScores; //the current scores of each of the bowlers
+    private int[][] cumulScores; //the cumulative scores of each of the bowlers
+    private boolean canThrowAgain; //whether the current bowler can throw again.
 
-    private int[][] finalScores;
-    private int gameNumber;
+    private int[][] finalScores; //the final scores of each bowler in the lane
+    private int gameNumber; //the game number (number of games the lane has)
 
     private Bowler currentThrower;          // = the thrower who just took a throw
 
@@ -185,7 +190,8 @@ public class Lane extends Thread implements PinsetterObserver {
 
     /** run()
      *
-     * entry point for execution of this lane
+     * entry point for execution of this lane. Loops through for each play of the bowlers until the game is over
+     * Needs to be compressed and have functionality pulled out.
      */
     public void run(){
 
@@ -193,17 +199,17 @@ public class Lane extends Thread implements PinsetterObserver {
             if (partyAssigned && !gameFinished) {   // we have a party on this lane,
                 // so next bower can take a throw
 
-                while (gameIsHalted) {
+                while (gameIsHalted) { //while the game is halted, it sleeps this thread
                     try {
                         sleep(10);
                     } catch (Exception e) {}
                 }
 
 
-                if (bowlerIterator.hasNext()) {
+                if (bowlerIterator.hasNext()) { //iterates through each bowler for each round
                     currentThrower = (Bowler)bowlerIterator.next();
 
-                    canThrowAgain = true;
+                    canThrowAgain = true; //resets for each bowler
                     tenthFrameStrike = false;
                     ball = 0;
                     while (canThrowAgain) {
@@ -211,7 +217,7 @@ public class Lane extends Thread implements PinsetterObserver {
                         ball++;
                     }
 
-                    if (frameNumber == 9) {
+                    if (frameNumber == 9) { //certain functionality if the frame is the second to last
                         finalScores[bowlIndex][gameNumber] = cumulScores[bowlIndex][9];
                         try{
                             Date date = new Date();
@@ -224,7 +230,7 @@ public class Lane extends Thread implements PinsetterObserver {
                     setter.reset();
                     bowlIndex++;
 
-                } else {
+                } else { // if the bowler cannot throw anymore, resets all stats, resets bowler iterator
                     frameNumber++;
                     resetBowlerIterator();
                     bowlIndex = 0;
@@ -233,7 +239,8 @@ public class Lane extends Thread implements PinsetterObserver {
                         gameNumber++;
                     }
                 }
-            } else if (partyAssigned && gameFinished) {
+            } else if (partyAssigned && gameFinished) { //if the game is over, creates an end game prompt
+                //when end game prompt responds, it is destroyed
                 EndGamePrompt egp = new EndGamePrompt( ((Bowler) party.getMembers().get(0)).getNickName() + "'s Party" );
                 int result = egp.getResult();
                 egp.distroy();
@@ -243,11 +250,11 @@ public class Lane extends Thread implements PinsetterObserver {
                 System.out.println("result was: " + result);
 
                 // TODO: send record of scores to control desk
-                if (result == 1) {                  // yes, want to play again
+                if (result == 1) {                  // yes, want to play again, reset scores and iterator
                     resetScores();
                     resetBowlerIterator();
 
-                } else if (result == 2) {// no, dont want to play another game
+                } else if (result == 2) {// no, dont want to play another game, return back to desk
                     Vector printVector;
                     EndGameReport egr = new EndGameReport( ((Bowler)party.getMembers().get(0)).getNickName() + "'s Party", party);
                     printVector = egr.getResult();
@@ -259,7 +266,7 @@ public class Lane extends Thread implements PinsetterObserver {
                     publish(lanePublish());
 
                     int myIndex = 0;
-                    while (scoreIt.hasNext()) {
+                    while (scoreIt.hasNext()) { //iterates through score and creates a score report for the whole game
                         Bowler thisBowler = (Bowler)scoreIt.next();
                         ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
                         sr.sendEmail(thisBowler.getEmail());
@@ -422,7 +429,7 @@ public class Lane extends Thread implements PinsetterObserver {
 
     /** getScore()
      *
-     * Method that calculates a bowlers score
+     * Method that calculates a bowlers score. Could switch over to state based calculation
      *
      * @param Cur		The bowler that is currently up
      * @param frame	The frame the current bowler is on
@@ -557,7 +564,7 @@ public class Lane extends Thread implements PinsetterObserver {
      *
      * Method that will add a subscriber
      *
-     * @param subscribe	Observer that is to be added
+     * @param adding	Observer that is to be added
      */
 
     public void subscribe( LaneObserver adding ){

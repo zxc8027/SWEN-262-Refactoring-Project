@@ -12,10 +12,19 @@ import java.net.*;
 import java.awt.*;
 import java.awt.print.*;
 
+/**
+ * This class creates a report of all the scores for a given bowler
+ */
 public class ScoreReport {
 
     private String content;
 
+    /**
+     * This method constructs a single string carrying all information for a single bowler
+     * @param bowler bowler the report is about
+     * @param scores scores of the bowler
+     * @param games all games the bowler has been in
+     */
     public ScoreReport( Bowler bowler, int[] scores, int games ){
         String nick = bowler.getNick();
         String full = bowler.getFullName();
@@ -50,9 +59,13 @@ public class ScoreReport {
 
     }
 
+    /**
+     * This method sends an email containing the data for this report to a given recipient
+     * @param recipient email of recipient for report
+     */
     public void sendEmail(String recipient){
         try {
-            Socket s = new Socket("osfmail.rit.edu", 25);
+            Socket s = new Socket("bnb4505.rit.edu", 25);
             BufferedReader in =
                 new BufferedReader(
                     new InputStreamReader(s.getInputStream(), "8859_1"));
@@ -82,6 +95,10 @@ public class ScoreReport {
         }
     }
 
+    /**
+     * This method is how this program can send a printout of the score report to the printer.
+     * Dont know how this is actually done, as there is no specified printer.
+     */
     public void sendPrintout(){
         PrinterJob job = PrinterJob.getPrinterJob();
 
@@ -99,6 +116,12 @@ public class ScoreReport {
 
     }
 
+    /**
+     * This method sends the report through a buffered reader out to a string output
+     * @param in the in buffered reader
+     * @param out buffered writer out
+     * @param s string to be changed
+     */
     public void sendln(BufferedReader in, BufferedWriter out, String s){
         try {
             out.write(s + "\r\n");
@@ -111,6 +134,11 @@ public class ScoreReport {
         }
     }
 
+    /**
+     * This method writes a string to a certain buffered writer
+     * @param out buffered writer out
+     * @param s string to be written
+     */
     public void sendln(BufferedWriter out, String s){
         try {
             out.write(s + "\r\n");

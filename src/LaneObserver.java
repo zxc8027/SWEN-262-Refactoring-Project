@@ -11,7 +11,14 @@
  *
  */
 
+/**
+ * This interface gives each lane observer the method to recieve a lane event.
+ */
 public interface LaneObserver {
+    /**
+     * This method forces functionality to be built in to each class that implements this interface
+     * @param le the lane event to be handled
+     */
     public void receiveLaneEvent(LaneEvent le);
 };
 

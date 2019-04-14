@@ -8,6 +8,11 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
+/**
+ * This class represents the GUI that shows the score of each of the players and which frame they are in.
+ * Uses updates from the lane to change what scores are showing. This view is shown when the user clicks on the
+ * ViewLane button on the lane status page.
+ */
 public class LaneView implements LaneObserver, ActionListener {
 
     private int roll;
@@ -29,6 +34,13 @@ public class LaneView implements LaneObserver, ActionListener {
     JButton maintenance;
     Lane lane;
 
+    /**
+     * This constructs the lane view, it takes the lane and the lane number so that it can label itself
+     * correctly
+     *
+     * @param lane the lane object it will be observing
+     * @param laneNum the lane number the lane is
+     */
     public LaneView(Lane lane, int laneNum){
 
         this.lane = lane;
@@ -48,14 +60,27 @@ public class LaneView implements LaneObserver, ActionListener {
 
     }
 
+    /**
+     * This method shows this window when called.
+     */
     public void show(){
         frame.show();
     }
 
+    /**
+     * This method hides this window when called
+     */
     public void hide(){
         frame.hide();
     }
 
+    /**
+     * This method creates the layout of the graphics that this window holds. It is large because it
+     * has to create some pretty fancy looking score cards.
+     *
+     * @param party the party that will be bowling
+     * @return returns the jpanel so it can be displayed
+     */
     private JPanel makeFrame(Party party){
 
         initDone = false;
@@ -122,6 +147,11 @@ public class LaneView implements LaneObserver, ActionListener {
         return panel;
     }
 
+    /**
+     * This method updates the players scores when the lane event is received. If the lane has a party assigned, then this
+     *
+     * @param le the lane event to be handled
+     */
     public void receiveLaneEvent(LaneEvent le){
         if (lane.isPartyAssigned()) {
             int numBowlers = le.getParty().getMembers().size();
@@ -133,7 +163,7 @@ public class LaneView implements LaneObserver, ActionListener {
                 }
             }
 
-            if (le.getFrameNum() == 1
+            if (le.getFrameNum() == 1 // if the frame is the first frame
                 && le.getBall() == 0
                 && le.getIndex() == 0) {
                 System.out.println("Making the frame.");
@@ -200,6 +230,10 @@ public class LaneView implements LaneObserver, ActionListener {
         }
     }
 
+    /**
+     * If there is a click and the click is on the maintenance button, then the game is paused.
+     * @param e the action event that was recieved.
+     */
     public void actionPerformed(ActionEvent e){
         if (e.getSource().equals(maintenance)) {
             lane.pauseGame();

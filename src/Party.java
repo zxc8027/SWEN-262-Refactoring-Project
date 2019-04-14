@@ -24,6 +24,9 @@
 
 import java.util.*;
 
+/**
+ * This class represents a party of bowlers.
+ */
 public class Party {
 
     /** Vector of bowlers in this party */

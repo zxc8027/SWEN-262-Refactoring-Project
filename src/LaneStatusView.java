@@ -12,6 +12,11 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
+/**
+ * The graphical view of the laneStatus window that the user is viewing. This creates and updates the view whenever a new game is
+ * started. Receives lane events. This is the class that acts as a reciever for action events, lane events
+ * and pinsetter events.
+ */
 public class LaneStatusView implements ActionListener, LaneObserver, PinsetterObserver {
 
     private JPanel jp;
@@ -28,6 +33,13 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
     boolean laneShowing;
     boolean psShowing;
 
+    /**
+     * This method stores the lane and lane number that this object will represent, and creates
+     * the GUI for the lane. Lane name and players will be updated when an event created for this.
+     * Delegates button functionality as well
+     * @param lane the lane object this object is subscribed to
+     * @param laneNum the lane number this object is subscribed to
+     */
     public LaneStatusView(Lane lane, int laneNum ){
 
         this.lane = lane;
@@ -97,10 +109,20 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
     }
 
+    /**
+     * Shows the collection of jswing objects that depict the gui of this lane
+     * @return JPane created above
+     */
     public JPanel showLane(){
         return jp;
     }
 
+    /**
+     * Recieves events on the pane, if any match certain determined events, such as
+     * clicking on the viewpinsetter button, or view lane, then this method shows, hides, or
+     * determines functionality to be done.
+     * @param e the action event to be recieved
+     */
     public void actionPerformed( ActionEvent e ){
         if ( lane.isPartyAssigned() ) {
             if (e.getSource().equals(viewPinSetter)) {
@@ -132,6 +154,11 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
         }
     }
 
+    /**
+     * This method controls what happens when this class recieves a lane event. If this lane has no party before
+     * the event, then this lane is named and enabled.
+     * @param le the lane event to be handled
+     */
     public void receiveLaneEvent(LaneEvent le){
         curBowler.setText( ( (Bowler)le.getBowler()).getNickName() );
         if ( le.isMechanicalProblem() ) {
@@ -146,6 +173,10 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
         }
     }
 
+    /**
+     * When a pinsetter event is received, it updates the pinsdown variable of this class
+     * @param pe the pinsetter event received
+     */
     public void receivePinsetterEvent(PinsetterEvent pe){
         pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
 //		foul.setText( ( new Boolean(pe.isFoulCommited()) ).toString() );

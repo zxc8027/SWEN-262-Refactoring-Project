@@ -9,10 +9,23 @@
 import java.util.*;
 import java.io.*;
 
+/**
+ * This class acts as a way to store scores for a person in a file to be accesssed at a later date.
+ * Uses
+ */
 public class ScoreHistoryFile {
 
     private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
 
+    /**
+     * This method is a way to add a nicknames score to the score file. Uses the name and date to see
+     * if an existing name exists, checks for IO exceptions and if all passes, it writes the save information
+     * @param nick nickname of the player to keep track of score
+     * @param date date of score
+     * @param score score number
+     * @throws IOException if there is an exception thrown when trying to write the bytes
+     * @throws FileNotFoundException if the file to be accessed does not exist
+     */
     public static void addScore(String nick, String date, String score)
     throws IOException, FileNotFoundException {
 
@@ -24,6 +37,13 @@ public class ScoreHistoryFile {
         out.close();
     }
 
+    /**
+     * This method acts as a way to retrieve scores from the scoresheet. Uses IO streams to read.
+     * @param nick the nickname for the score to be accessed
+     * @return return the score of the given nickname
+     * @throws IOException if there is an error reading data
+     * @throws FileNotFoundException if the file given does not exist
+     */
     public static Vector getScores(String nick)
     throws IOException, FileNotFoundException {
         Vector scores = new Vector();

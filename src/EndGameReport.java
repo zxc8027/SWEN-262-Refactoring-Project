@@ -15,6 +15,10 @@ import javax.swing.event.*;
 import java.util.*;
 import java.text.*;
 
+/**
+ * This class represents the report shown to the user when the game is over. It shows the party members,
+ * gives the user the option to print the report, or finish the game.
+ */
 public class EndGameReport implements ActionListener, ListSelectionListener {
 
     private JFrame win;
@@ -27,6 +31,13 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 
     private String selectedMember;
 
+    /**
+     * This creates the visual layout for the end of game report, and processes information for it.
+     * Also delegates button responsibility to other methods in this class.
+     *
+     * @param partyName the name of the party of the most recently completed game
+     * @param party the players in the party of the most recently completed game
+     */
     public EndGameReport( String partyName, Party party ){
 
         result =0;
@@ -97,6 +108,13 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 
     }
 
+    /**
+     * This method is called when an event is performed on the report. Takes the report type
+     * and checks to see if either the print or finish button was clicked. If they were, then it sets
+     * the result to predetermined values to be fetched later.
+     *
+     * @param e the event completed
+     */
     public void actionPerformed(ActionEvent e){
         if (e.getSource().equals(printButton)) {
             //Add selected to the vector.
@@ -109,11 +127,24 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 
     }
 
+    /**
+     * This method is called when a certain type of event is done, where a value is changed.
+     * Updates the selectedMember value with the new value
+     *
+     * @param e the event that was made
+     */
     public void valueChanged(ListSelectionEvent e){
         selectedMember =
             ((String) ((JList) e.getSource()).getSelectedValue());
     }
 
+    /**
+     * This method is called to fetch the result of the action events on the screen.
+     * If neither button was clicked, then the page stays active, otherwise, the thread returns the
+     * value and then is hidden.
+     *
+     * @return the result of the event
+     */
     public Vector getResult(){
         while ( result == 0 ) {
             try {
@@ -125,17 +156,24 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
         return retVal;
     }
 
+    /**
+     * This method is used to hide this graphic
+     */
     public void destroy(){
         win.hide();
     }
 
+    /**
+     * This main method runs a weird test of the view. Dont know why this is here
+     * @param args
+     */
     public static void main( String args[] ){
         Vector bowlers = new Vector();
         for ( int i=0; i<4; i++ ) {
             bowlers.add( new Bowler( "aaaaa", "aaaaa", "aaaaa" ) );
         }
         Party party = new Party( bowlers );
-        String partyName="wank";
+        String partyName="wank"; //why is this wank lmao
         EndGameReport e = new EndGameReport( partyName, party );
     }
 

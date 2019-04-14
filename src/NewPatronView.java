@@ -25,6 +25,9 @@ import javax.swing.event.*;
 import java.util.*;
 import java.text.*;
 
+/**
+ * This class represents the view for adding a patron to a party. Is a subview of the addpartyview
+ */
 public class NewPatronView implements ActionListener {
 
     private int maxSize;
@@ -40,6 +43,12 @@ public class NewPatronView implements ActionListener {
     private String selectedNick, selectedMember;
     private AddPartyView addParty;
 
+    /**
+     * This constructor both assigns the party view and creates the graphical layout of this view. This
+     * view is part of the AddParty view.
+     *
+     * @param v partyview that this patron view is part of
+     */
     public NewPatronView(AddPartyView v){
 
         addParty=v;
@@ -120,6 +129,11 @@ public class NewPatronView implements ActionListener {
 
     }
 
+    /**
+     * Handles when events on this view are performed. If any are important, this method
+     * delegates functionality/hides
+     * @param e the action event performed
+     */
     public void actionPerformed(ActionEvent e){
         if (e.getSource().equals(abort)) {
             done = true;
@@ -137,18 +151,34 @@ public class NewPatronView implements ActionListener {
 
     }
 
+    /**
+     * This returns if the patron view is done doing its thing
+     * @return whether this is done or not
+     */
     public boolean done(){
         return done;
     }
 
+    /**
+     * Getter for the nickname of the new patron
+     * @return name
+     */
     public String getNick(){
         return nick;
     }
 
+    /**
+     * Getter for the fullness of this patron
+     * @return full
+     */
     public String getFull(){
         return full;
     }
 
+    /**
+     * Getter for the email of this patron
+     * @return email
+     */
     public String getEmail(){
         return email;
     }

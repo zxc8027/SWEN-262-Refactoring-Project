@@ -19,6 +19,10 @@ import javax.swing.*;
 import java.util.Vector;
 
 
+/**
+ * The graphical implementation of a set of pins. This is an optional box that can be displayed for a lane
+ * of a bowling game. Observes a pinsetter, and is updated whenever the pinsetter has a state change
+ */
 public class PinSetterView implements PinsetterObserver {
 
 
@@ -41,6 +45,11 @@ public class PinSetterView implements PinsetterObserver {
 
     private JFrame frame;
 
+    /**
+     * This method creates a pinsetter view gui, with the lane number of the lane this pinsetter
+     * observes.
+     * @param laneNum the lane number that this pinsetter is part of
+     */
     public PinSetterView ( int laneNum ){
 
         frame = new JFrame ( "Lane " + laneNum + ":" );
@@ -180,10 +189,8 @@ public class PinSetterView implements PinsetterObserver {
      * is grayed out.  When it is the second roll, it is indicated by the
      * appearance of a second yellow box at the top.
      *
-     * @param e    The state of the pinsetter is sent in this event.
+     * @param pe    The state of the pinsetter is sent in this event.
      */
-
-
     public void receivePinsetterEvent(PinsetterEvent pe){
         if ( !(pe.isFoulCommited()) ) {
             JLabel tempPin = new JLabel ( );
@@ -206,14 +213,24 @@ public class PinSetterView implements PinsetterObserver {
         }
     }
 
+    /**
+     * Called by the laneReportView if the button is clicked. This shows this page
+     */
     public void show(){
         frame.show();
     }
 
+    /**
+     * Called when this page is meant to be hidden
+     */
     public void hide(){
         frame.hide();
     }
 
+    /**
+     * Dont know why this main method is here. Maybe to test it? No idea. TODO remove this b*tch
+     * @param args dunno
+     */
     public static void main ( String args [] ){
         PinSetterView pg = new PinSetterView ( 1 );
     }

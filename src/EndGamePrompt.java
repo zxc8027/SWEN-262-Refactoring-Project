@@ -15,6 +15,10 @@ import javax.swing.event.*;
 import java.util.*;
 import java.text.*;
 
+/**
+ * This is a class to represent the popup that shows when a game has ended. This gives the user
+ * ability to continue bowling, or end the game and go back to the control desk.
+ */
 public class EndGamePrompt implements ActionListener {
 
     private JFrame win;
@@ -24,6 +28,12 @@ public class EndGamePrompt implements ActionListener {
 
     private String selectedNick, selectedMember;
 
+    /**
+     * This constructor creates the visual display and delegates what the buttons on the
+     * prompt do.
+     *
+     * @param partyName the name of the party whose game has ended
+     */
     public EndGamePrompt( String partyName ){
 
         result =0;
@@ -82,6 +92,13 @@ public class EndGamePrompt implements ActionListener {
 
     }
 
+    /**
+     * This method is called when there is an action performed on the prompt. If it is the yes button
+     * being clicked, the result is 1, if it is the no button, the result is 2. This then is sent to the
+     * control desk so that it knows whether the game is over or not
+     *
+     * @param e the action event on screen
+     */
     public void actionPerformed(ActionEvent e){
         if (e.getSource().equals(yesButton)) {
             result=1;
@@ -92,6 +109,12 @@ public class EndGamePrompt implements ActionListener {
 
     }
 
+    /**
+     * This method is called while the class is waiting for an event to occurr. This method returns a result
+     * when an action is completed, such as the yes or no button being clicked
+     *
+     * @return returns the value of the event result
+     */
     public int getResult(){
         while ( result == 0 ) {
             try {
@@ -103,6 +126,9 @@ public class EndGamePrompt implements ActionListener {
         return result;
     }
 
+    /**
+     * This method is called to hide the prompt when an action is successfully completed
+     */
     public void distroy(){
         win.hide();
     }

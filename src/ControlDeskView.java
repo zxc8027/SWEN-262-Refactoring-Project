@@ -21,6 +21,11 @@ import javax.swing.event.*;
 
 import java.util.*;
 
+/**
+ * This class controls the GUI aspect of the control desk. The control desk is how the user sets up the parties
+ * and the game types. Uses Java swing and awt to create the visuals
+ */
+
 public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
     private JButton addParty, finished, assign;
@@ -33,7 +38,8 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
     private ControlDesk controlDesk;
 
     /**
-     * Displays a GUI representation of the ControlDesk
+     * Displays a GUI representation of the ControlDesk. Also delegates logic from buttons
+     * to link over to other classes.
      *
      */
 

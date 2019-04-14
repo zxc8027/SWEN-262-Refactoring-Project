@@ -73,6 +73,10 @@
 import java.util.*;
 import java.lang.Boolean;
 
+/**
+ * This class represents the pinsetter that controls the logic behind a lane's set of pins. Contains
+ * methods to do a simulation of a bowl for a bowlers turn, and state updaters for observers
+ */
 public class Pinsetter {
 
     private Random rnd;
@@ -83,9 +87,9 @@ public class Pinsetter {
        false for knocked down
 
        6   7   8   9
-       3   4   5
-        2   1
-          0
+         3   4   5
+           2   1
+             0
 
      */
     private boolean foul;
