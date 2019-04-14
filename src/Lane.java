@@ -453,9 +453,6 @@ public class Lane extends Thread implements PinsetterObserver {
                 //Also, we're not on the current ball.
                 //Add the next ball to the ith one in cumul.
                 cumulScores[bowlIndex][(i/2)] += curScore[i+1] + curScore[i];
-                if (i > 1) {
-                    //cumulScores[bowlIndex][i/2] += cumulScores[bowlIndex][i/2 -1];
-                }
             } else if( i < current && i%2 == 0 && curScore[i] == 10  && i < 18) {
                 strikeballs = 0;
                 //This ball is the first ball, and was a strike.

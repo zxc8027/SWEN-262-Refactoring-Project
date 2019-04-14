@@ -64,7 +64,6 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
         memberList.setVisibleRowCount(5);
         memberList.addListSelectionListener(this);
         JScrollPane partyPane = new JScrollPane(memberList);
-        //        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         partyPanel.add(partyPane);
 
         partyPanel.add( memberList );
@@ -162,20 +161,5 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
     public void destroy(){
         win.hide();
     }
-
-    /**
-     * This main method runs a weird test of the view. Dont know why this is here
-     * @param args
-     */
-    public static void main( String args[] ){
-        Vector bowlers = new Vector();
-        for ( int i=0; i<4; i++ ) {
-            bowlers.add( new Bowler( "aaaaa", "aaaaa", "aaaaa" ) );
-        }
-        Party party = new Party( bowlers );
-        String partyName="wank"; //why is this wank lmao
-        EndGameReport e = new EndGameReport( partyName, party );
-    }
-
 }
 

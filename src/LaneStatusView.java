@@ -100,8 +100,6 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
         jp.add( cLabel );
         jp.add( curBowler );
-//		jp.add( fLabel );
-//		jp.add( foul );
         jp.add( pdLabel );
         jp.add( pinsDown );
 
@@ -179,7 +177,6 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
      */
     public void receivePinsetterEvent(PinsetterEvent pe){
         pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
-//		foul.setText( ( new Boolean(pe.isFoulCommited()) ).toString() );
 
     }
 

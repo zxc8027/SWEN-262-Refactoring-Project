@@ -231,8 +231,8 @@ public class PinSetterView implements PinsetterObserver {
      * Dont know why this main method is here. Maybe to test it? No idea. TODO remove this b*tch
      * @param args dunno
      */
-    public static void main ( String args [] ){
-        PinSetterView pg = new PinSetterView ( 1 );
-    }
+    //public static void main ( String args [] ){
+        //PinSetterView pg = new PinSetterView ( 1 );
+    //}
 
 }
