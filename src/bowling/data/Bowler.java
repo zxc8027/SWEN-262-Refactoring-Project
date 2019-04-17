@@ -1,10 +1,8 @@
-package com.dougestep.bowling.data;
+package bowling.data;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -12,8 +10,7 @@ import java.util.UUID;
  *
  * @author dougestep
  */
-@SuppressFBWarnings
-@SuppressWarnings("PMD")
+
 public class Bowler implements Serializable {
     private static final long serialVersionUID = -7660000888725336033L;
     private UUID uid;
@@ -94,7 +91,7 @@ public class Bowler implements Serializable {
         }
 
         final Bowler other = (Bowler) obj;
-        return Objects.equal(this.uid, other.uid);
+        return this.uid == other.uid;
     }
 
     @Override
@@ -104,9 +101,9 @@ public class Bowler implements Serializable {
 
     @Override
     public String toString() {
-        final MoreObjects.ToStringHelper str = MoreObjects.toStringHelper(this);
-        str.add("firstName", firstName);
-        str.add("lastName", lastName);
-        return str.toString();
+        String str = "";
+        str += "firstName " + firstName;
+        str += "lastName " + lastName;
+        return str;
     }
 }

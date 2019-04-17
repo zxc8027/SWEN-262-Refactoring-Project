@@ -1,21 +1,18 @@
-package com.dougestep.bowling.data;
+package bowling.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Represents a bowling game for a particular bowler.
  *
  * @author dougestep
  */
-@SuppressFBWarnings
-@SuppressWarnings("PMD")
+
+
 public class Game implements Serializable {
     private static final long serialVersionUID = 751620950527583199L;
     private UUID uid;
@@ -174,20 +171,20 @@ public class Game implements Serializable {
         }
 
         final Game other = (Game) obj;
-        return Objects.equal(this.uid, other.uid);
+        return this.uid == other.uid;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(uid);
+        return uid.hashCode();
     }
 
     @Override
     public String toString() {
-        final MoreObjects.ToStringHelper str = MoreObjects.toStringHelper(this);
-        str.add("player", bowler);
-        str.add("score", score);
-        str.add("complete", complete);
-        return str.toString();
+        String str = "";
+        str += "player " + bowler;
+        str += "score " + score;
+        str += "complete " + complete;
+        return str;
     }
 }

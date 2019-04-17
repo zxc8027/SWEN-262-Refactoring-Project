@@ -1,14 +1,15 @@
-package com.dougestep.bowling.impl;
+package bowling.impl;
 
-import com.dougestep.bowling.GameManager;
-import com.dougestep.bowling.data.Bowler;
-import com.dougestep.bowling.data.BowlingFrame;
-import com.dougestep.bowling.data.Game;
-import com.google.common.base.Verify;
+import bowling.GameManager;
+import bowling.data.Bowler;
+import bowling.data.BowlingFrame;
+import bowling.data.Game;
+
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
 
 /**
  * Manages a bowling game.
@@ -77,7 +78,7 @@ public final class GameManagerImpl implements GameManager {
 
     @Override
     public GameManager addFrame(final BowlingFrame frame) {
-        assertValidFrame(frame);
+        //assertValidFrame(frame);
 
         final int frameNumber = frames.size() + 1;
         frames.put(frameNumber, frame);
@@ -85,11 +86,11 @@ public final class GameManagerImpl implements GameManager {
         return calculateScore();
     }
 
-    /**
+  /*  *//**
      * Asserts the properties of the supplied {@link BowlingFrame} are valid.
      *
-     * @param frame the frame.
-     */
+     * param frame the frame.
+     *//*
     private void assertValidFrame(final BowlingFrame frame) {
         Verify.verifyNotNull(frame, "expected a non-null reference to %s", "FrameBean");
         Verify.verify(frame.getFirstBall() >= 0 && frame.getFirstBall() <= MARK_1,
@@ -101,7 +102,7 @@ public final class GameManagerImpl implements GameManager {
         Verify.verify(frame.getFrameTotal() <= MARK_1,
                 "The sum of the first and second ball can not be greater than 10.");
     }
-
+*/
     @Override
     public GameManager calculateScore() {
         final int topFrame = frames.size();
@@ -272,9 +273,9 @@ public final class GameManagerImpl implements GameManager {
     @Override
     public GameManager replaceFrame(final int frameNumber, final BowlingFrame frame) {
         final BowlingFrame retrFrame = retrieveFrame(frameNumber);
-        Verify.verify(retrFrame != null, "Frame not found for frame number %s", frameNumber);
-
-        assertValidFrame(frame);
+//        Verify.verify(retrFrame != null, "Frame not found for frame number %s", frameNumber);
+//
+//        assertValidFrame(frame);
 
         frames.put(frameNumber, frame);
 

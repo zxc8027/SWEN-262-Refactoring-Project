@@ -1,8 +1,8 @@
-package com.dougestep.bowling;
+package bowling;
 
 import java.io.PrintStream;
 
-import com.dougestep.bowling.data.Game;
+import bowling.data.Game;
 
 /**
  * Defines a class which manages printing a bowling game.

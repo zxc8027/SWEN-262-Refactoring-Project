@@ -1,8 +1,5 @@
-package com.dougestep.bowling.data;
+package bowling.data;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -12,8 +9,6 @@ import java.util.UUID;
  *
  * @author dougestep
  */
-@SuppressFBWarnings
-@SuppressWarnings("PMD")
 public class BowlingFrame implements Serializable {
     private static final long serialVersionUID = 7993320853342434486L;
     /**
@@ -240,25 +235,20 @@ public class BowlingFrame implements Serializable {
         }
 
         final BowlingFrame other = (BowlingFrame) obj;
-        return Objects.equal(this.uid, other.uid);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(uid);
+        return this.uid == other.uid;
     }
 
     @Override
     public String toString() {
-        final MoreObjects.ToStringHelper str = MoreObjects.toStringHelper(this);
-        str.add("firstBall", firstBall);
-        str.add("secondBall", secondBall);
-        str.add("score", score);
-        str.add("strike", isStrike());
-        str.add("spare", isSpare());
-        str.add("split", isSplit());
-        str.add("openFrame", isOpenFrame());
-        str.add("frameTotal", getFrameTotal());
-        return str.toString();
+        String str = "";
+        str += "firstBall " + firstBall;
+        str += "secondBall " + secondBall;
+        str += "score " + score;
+        str += "strike " + isStrike();
+        str += "spare " + isSpare();
+        str += "split " + isSplit();
+        str += "openFrame " + isOpenFrame();
+        str += "frameTotal " + getFrameTotal();
+        return str;
     }
 }

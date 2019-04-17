@@ -1,7 +1,7 @@
-package com.dougestep.bowling;
+package bowling;
 
-import com.dougestep.bowling.data.BowlingFrame;
-import com.dougestep.bowling.data.Game;
+import bowling.data.BowlingFrame;
+import bowling.data.Game;
 
 /**
  * Defines a class which manages a bowling game.
