@@ -36,6 +36,8 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
     private ControlDesk controlDesk;
 
+    private HashMap<JButton,UIEventHandler> eventHandlers;
+
     /**
      * Displays a GUI representation of the ControlDesk. Also delegates logic from buttons
      * to link over to other classes.
@@ -138,6 +140,11 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
             ((screenSize.height) / 2) - ((win.getSize().height) / 2));
         win.show();
 
+        // Create the event handlers.
+        this.eventHandlers = new HashMap<>();
+        this.eventHandlers.put(this.addParty,new AddPartyEventHandler(this));
+        this.eventHandlers.put(this.assign,null);
+        this.eventHandlers.put(this.finished,new ControlDeskFinishedEventHandler(this));
     }
 
     /**
@@ -148,6 +155,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
      */
 
     public void actionPerformed(ActionEvent e){
+        /*
         if (e.getSource().equals(addParty)) {
             AddPartyView addPartyWin = new AddPartyView(this, maxMembers);
         }
@@ -157,7 +165,11 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
         if (e.getSource().equals(finished)) {
             win.hide();
             System.exit(0);
-        }
+        }*/
+
+        // Get and run the event.
+        UIEventHandler handler = this.eventHandlers.get(e.getSource());
+        handler.handleEvent();
     }
 
     /**
@@ -180,5 +192,33 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
     public void receiveControlDeskEvent(ControlDeskEvent ce){
         partyList.setListData(((Vector) ce.getPartyQueue()));
+    }
+
+    /**
+     * Returns the control desk.
+     */
+    public ControlDesk getControlDesk() {
+        return this.controlDesk;
+    }
+
+    /**
+     * Returns the maximum size.
+     */
+    public int getMaxMembers() {
+        return this.maxMembers;
+    }
+
+    /**
+     * Shows the window.
+     */
+    public void showWindow() {
+        this.showWindow();
+    }
+
+    /**
+     * Hides the window.
+     */
+    public void hideWindow() {
+        this.win.hide();
     }
 }

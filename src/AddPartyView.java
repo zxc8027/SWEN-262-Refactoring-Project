@@ -23,6 +23,8 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 
     private String selectedNick, selectedMember;
 
+    private HashMap<JButton,UIEventHandler> eventHandlers;
+
     /**
      * Constructor of the AddPartyView class.
      *
@@ -126,6 +128,12 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
             ((screenSize.height) / 2) - ((win.getSize().height) / 2));
         this.win.show();
 
+        // Create the event handlers.
+        this.eventHandlers = new HashMap<>();
+        this.eventHandlers.put(this.addPatron,new AddPatronEventHandler(this));
+        this.eventHandlers.put(this.remPatron,new RemovePatronEventHandler(this));
+        this.eventHandlers.put(this.newPatron,new NewPatronEventHandler(this));
+        this.eventHandlers.put(this.finished,new AddPartyFinishedEventHandler(this));
     }
 
     /**
@@ -133,33 +141,10 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
      *
      * @param e the event that occurred.
      */
-    public void actionPerformed(ActionEvent e){
-        if (e.getSource().equals(this.addPatron)) {
-            if (this.selectedNick != null && this.party.size() < this.maxSize) {
-                if (this.party.contains(selectedNick)) {
-                    System.err.println("Member already in Party");
-                } else {
-                    this.party.add(this.selectedNick);
-                    this.partyList.setListData(this.party);
-                }
-            }
-        }
-        if (e.getSource().equals(this.remPatron)) {
-            if (this.selectedMember != null) {
-                this.party.removeElement(this.selectedMember);
-                this.partyList.setListData(this.party);
-            }
-        }
-        if (e.getSource().equals(this.newPatron)) {
-            NewPatronView newPatron = new NewPatronView( this );
-        }
-        if (e.getSource().equals(this.finished)) {
-            if ( this.party != null && this.party.size() > 0) {
-                this.controlDesk.updateAddParty( this );
-            }
-            this.win.hide();
-        }
-
+    public void actionPerformed(ActionEvent e) {
+        // Get and run the event.
+        UIEventHandler handler = this.eventHandlers.get(e.getSource());
+        handler.handleEvent();
     }
 
     /**
@@ -210,9 +195,58 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
     }
 
     /**
+     * Returns the maximum size.
+     */
+    public int getMaxSize() {
+        return this.maxSize;
+    }
+
+    /**
+     * Returns the selected nickname.
+     */
+    public String getSelectedNickName() {
+        return this.selectedNick;
+    }
+
+    /**
+     * Returns the selected member.
+     */
+    public String getSelectedMember() {
+        return this.selectedMember;
+    }
+
+    /**
      * Returns the party.
      */
     public Vector getParty(){
         return party;
+    }
+
+    /**
+     * Returns the control desk view.
+     */
+    public ControlDeskView getControlDeskView() {
+        return this.controlDesk;
+    }
+
+    /**
+     * Returns the party list.
+     */
+    public JList getPartyList() {
+        return this.partyList;
+    }
+
+    /**
+     * Shows the window.
+     */
+    public void showWindow() {
+        this.showWindow();
+    }
+
+    /**
+     * Hides the window.
+     */
+    public void hideWindow() {
+        this.win.hide();
     }
 }
