@@ -143,6 +143,11 @@ import java.util.Date;
  * This class represents the entirety of a single late. Keeps track of each turn made,
  * the current players, the status of the game, and all sorts of other stuff. This is too big a class.
  * Will be refactored into a pattern and subclasses to remove the work this class does
+ *
+ * Uses a bowling score api from this library:
+ * https://github.com/dgestep/bowling-score-keeper
+ *
+ * All code credit within the bowling package goes to him
  */
 public class Lane extends Thread implements PinsetterObserver {
     private Party party; //the party that is using this lane
@@ -166,6 +171,7 @@ public class Lane extends Thread implements PinsetterObserver {
 
     private int[][] finalScores; //the final scores of each bowler in the lane
     private int gameNumber; //the game number (number of games the lane has)
+
 
     private Bowler currentThrower;          // = the thrower who just took a throw
 
@@ -321,7 +327,7 @@ public class Lane extends Thread implements PinsetterObserver {
                     //publish( lanePublish() );
                 }
 
-                if (pe.getThrowNumber() == 3) {
+                if (pe.getThrowNumber() == 3) { // if the throw number is over 2, cannot throw again
                     canThrowAgain = false;
                     //publish( lanePublish() );
                 }
@@ -389,6 +395,8 @@ public class Lane extends Thread implements PinsetterObserver {
         resetBowlerIterator();
         partyAssigned = true;
 
+
+
         curScores = new int[party.getMembers().size()];
         cumulScores = new int[party.getMembers().size()][10];
         finalScores = new int[party.getMembers().size()][128]; //Hardcoding a max of 128 games, bite me.
@@ -412,7 +420,6 @@ public class Lane extends Thread implements PinsetterObserver {
 
         curScore = (int[]) scores.get(Cur);
 
-
         curScore[ index - 1] = score;
         scores.put(Cur, curScore);
         getScore( Cur, frame );
@@ -433,21 +440,26 @@ public class Lane extends Thread implements PinsetterObserver {
     /** getScore()
      *
      * Method that calculates a bowlers score. Could switch over to state based calculation
+     * Every time this method is called the new score is calculated. As of now it does not keep track
+     * of previous calculated scores
      *
      * @param Cur		The bowler that is currently up
-     * @param frame	The frame the current bowler is on
+     * @param frame	    The frame the current bowler is on
      *
      * @return			The bowlers total score
      */
     private int getScore( Bowler Cur, int frame){
-        int[] curScore;
-        int strikeballs = 0;
-        int totalScore = 0;
+        int[] curScore; //current score is the array of each ball score thrown.
+        int strikeballs = 0; //number of strike balls
+        int totalScore = 0; //total score
         curScore = (int[]) scores.get(Cur);
+
         for (int i = 0; i != 10; i++) {
-            cumulScores[bowlIndex][i] = 0;
+            cumulScores[bowlIndex][i] = 0; //cumulScores is the array list of scores for the bowler,
         }
+
         int current = 2*(frame - 1)+ball-1;
+
         //Iterate through each ball until the current one.
         for (int i = 0; i != current+2; i++) {
             //Spare:
