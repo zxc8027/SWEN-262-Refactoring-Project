@@ -60,10 +60,10 @@ public class ScoringAPIController {
      * This is called when the bowler scores a spare for a total frame.
      * @param bowler bowler that is bowling
      */
-    public void addSpare(Bowler bowler, int frame){
+    public void addSpare(Bowler bowler, int score1, int score2){
         bowling.GameManager game = getBowlersGame(bowler);
 
-        game.getGame().addFrame(new BowlingFrame().setSplit(true));
+        game.addFrame(new BowlingFrame(score1, score2).setSplit(true));
     }
 
     /**
@@ -73,7 +73,7 @@ public class ScoringAPIController {
     public void addStrike(Bowler bowler){
         bowling.GameManager game = getBowlersGame(bowler);
 
-        game.getGame().addFrame(BowlingFrame.strike());
+        game.addFrame(BowlingFrame.strike());
     }
 
     /**
@@ -86,10 +86,10 @@ public class ScoringAPIController {
         bowling.GameManager game = getBowlersGame(bowler);
 
         if(score2 == 0){
-            game.getGame().addFrame(new BowlingFrame(score1));
+            game.addFrame(new BowlingFrame(score1));
 
         }else{
-            game.getGame().addFrame(new BowlingFrame(score1, score2));
+            game.addFrame(new BowlingFrame(score1, score2));
 
         }
     }
@@ -112,7 +112,7 @@ public class ScoringAPIController {
     public int getFrameScore(Bowler bowler, int frame){
         bowling.GameManager game = getBowlersGame(bowler);
 
-        bowling.data.BowlingFrame bowlerFrame = game.retrieveFrame(frame);
+        bowling.data.BowlingFrame bowlerFrame = game.retrieveFrame(frame + 1);
 
         return bowlerFrame.getScore();
     }
@@ -128,6 +128,8 @@ public class ScoringAPIController {
         }
     }
 
-
-
+    @Override
+    public String toString() {
+        return games.toString();
+    }
 }

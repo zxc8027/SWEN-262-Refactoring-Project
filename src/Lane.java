@@ -576,15 +576,16 @@ public class Lane extends Thread implements PinsetterObserver {
      */
     private int getScore(Bowler currentBowler, int frame){
         int[] currentScoreArray; //this is the array of each ball thrown for the current bowler
+        int currentScoreIndex; //the index for the last last ball thrown
         int totalScore = 0;
+        boolean incompleteFrame = false;
 
-        for (int i = 0; i != 10; i++) {
-            cumulScores[bowlIndex][i] = 0; //cumulScores is the array list of scores for the bowler,
-        }
+        frame -= 1;//zero-index frames
 
         //this represents each number of pins bowled for each frame.
         //0,1 is a frame, 2,3 is a frame, 4,5 is a frame, unless a strike was bowled,
         currentScoreArray = (int[]) scores.get(currentBowler);
+        currentScoreIndex = 2*frame+ball;
 
 
         //System.out.println(currentScoreArray[((frame*2)-1)-1] + ", " + currentScoreArray[((frame*2)-1)]);
@@ -594,21 +595,21 @@ public class Lane extends Thread implements PinsetterObserver {
         //if its not odd, but a 10, then we can just submit a strike frame and move on.
         //so we can do some logic to see if its a spare, strike, or whatever
 
-        if(currentScoreArray[((frame*2)-1)-1 ] == 10) {
+        if(currentScoreArray[currentScoreIndex] == 10) {
             //((frame * 2) - 1) is the last ball thrown in a frame, could be -1 too.
             //((frame * 2) - 1) - 1) is the first ball thrown in a frame
             //if the bowl is a -1, its a strike and we just submit a strike
             //this is because a 10 is scored first ball, the second is -1.
             apiController.addStrike(currentBowler);
-            cumulScores[bowlIndex][frame] += apiController.getScore(currentBowler);
 
-        }else if(currentScoreArray[((frame*2)-1)] + currentScoreArray[((frame*2)-1)-1] == 10){
+        }else if(ball == 1 && currentScoreArray[currentScoreIndex - 1] + currentScoreArray[currentScoreIndex] == 10){
             //this compares the first bowled frame score to this bowled frame score
             //if this is a spare, then we have to tell the api controller that
             //a spare was scored.
 
-            apiController.addSpare(currentBowler, frame);
-            cumulScores[bowlIndex][frame] += apiController.getScore(currentBowler);
+            apiController.addSpare(currentBowler,
+                    currentScoreArray[currentScoreIndex - 1],
+                    currentScoreArray[currentScoreIndex]);
 
 
         }else if(ball == 2){
@@ -617,9 +618,9 @@ public class Lane extends Thread implements PinsetterObserver {
             //this is the last frame and that we wont need any more
 
             apiController.addFrame(currentBowler,
-                    currentScoreArray[((frame*2)-1)-1],
-                    currentScoreArray[((frame*2)-1)]);
-            cumulScores[bowlIndex][frame] += apiController.getScore(currentBowler) + currentScoreArray[((frame*2))];
+                    currentScoreArray[currentScoreIndex - 2],
+                    currentScoreArray[currentScoreIndex - 1]);
+            incompleteFrame = true;
 
             totalScore = cumulScores[bowlIndex][frame];
 
@@ -632,9 +633,9 @@ public class Lane extends Thread implements PinsetterObserver {
 
             if(ball == 0){
                 //this means the ball is the first one of the frame. Simply add this frame using a single bowl.
-                apiController.addFrame(currentBowler, currentScoreArray[((frame*2)-1)], 0);
+//                apiController.addFrame(currentBowler, currentScoreArray[currentScoreIndex], 0);
                 if(frame != 10) {
-                    cumulScores[bowlIndex][frame] += apiController.getScore(currentBowler);
+                    incompleteFrame = true;
                 }
 
                 //System.out.println(currentScoreArray[((frame*2)-1)]);
@@ -645,18 +646,30 @@ public class Lane extends Thread implements PinsetterObserver {
                 //this means the ball is the last one of the frame, unless the if(ball == 2) was not triggered.
                 //Submit the frame to be completed and added to the game.
                 apiController.addFrame(currentBowler,
-                        currentScoreArray[((frame*2)-1)-1],
-                        currentScoreArray[((frame*2)-1)]);
+                        currentScoreArray[currentScoreIndex - 1],
+                        currentScoreArray[currentScoreIndex]);
 
                 //System.out.println(currentScoreArray[((frame*2)-1)]);
+            }
+        }
 
-                cumulScores[bowlIndex][frame] += apiController.getScore(currentBowler);
+        for (int i = 0; i <= frame; i++) {
+            if(incompleteFrame && i == frame) {
+                cumulScores[bowlIndex][i] = currentScoreArray[currentScoreIndex];
+                if(i > 0) {
+                    cumulScores[bowlIndex][i] += apiController.getFrameScore(currentBowler, i - 1);
+                }
+            } if(i == frame) {
+                cumulScores[bowlIndex][i] = 0;
+            } else {
+                cumulScores[bowlIndex][i] = apiController.getFrameScore(currentBowler, i);
             }
         }
 
         //System.out.println(cumulScores[bowlIndex][frame]);
 
         //System.out.println(Arrays.toString(currentScoreArray));
+        //System.out.println(currentBowler.getNick() + " " + apiController.getScore(currentBowler));
         //System.out.println(current);
         //System.out.println(frame);
 
@@ -672,6 +685,8 @@ public class Lane extends Thread implements PinsetterObserver {
      */
     public boolean isPartyAssigned(){
         return partyAssigned;
+        //System.out.println(Arrays.toString(currentScoreArray));
+        //System.out.println(Arrays.toString(currentScoreArray));
     }
 
     /** isGameFinished
