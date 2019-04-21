@@ -12,14 +12,20 @@ public class ScoringAPIController {
      * @param bowlingParty the party that will be bowling this game
      */
     public ScoringAPIController(Party bowlingParty){
-        for(int i = 0; bowlingParty.getMembers().size() > 0; i++){
+        for(int i = 0; i <= bowlingParty.getMembers().size()-1; i++){
             Bowler newBowler = (Bowler)bowlingParty.getMembers().get(i);
+
             bowling.data.Bowler apiBowler = new bowling.data.Bowler().setFirstName(newBowler.getNick());
             apiBowler.setLastName("");
 
             bowling.GameManager apiGame = bowling.impl.GameManagerImpl.newGame(apiBowler);
+
             bowlers.add(apiBowler);
             games.add(apiGame);
+
+
+            System.out.println(games.toString());
+            System.out.println(bowlers.toString());
         }
     }
 
@@ -42,11 +48,11 @@ public class ScoringAPIController {
                     return apiGame;
                 }
             }
-            return null;
+            return games.get(0);
 
         }else{
             System.out.println("Bowler not in the list!");
-            return null;
+            return games.get(0);
         }
     }
 
@@ -57,7 +63,7 @@ public class ScoringAPIController {
     public void addSpare(Bowler bowler, int frame){
         bowling.GameManager game = getBowlersGame(bowler);
 
-        game.addFrame(new BowlingFrame().setSplit(true));
+        game.getGame().addFrame(new BowlingFrame().setSplit(true));
     }
 
     /**
@@ -67,7 +73,7 @@ public class ScoringAPIController {
     public void addStrike(Bowler bowler){
         bowling.GameManager game = getBowlersGame(bowler);
 
-        game.addFrame(BowlingFrame.strike());
+        game.getGame().addFrame(BowlingFrame.strike());
     }
 
     /**
@@ -79,7 +85,13 @@ public class ScoringAPIController {
     public void addFrame(Bowler bowler, int score1, int score2){
         bowling.GameManager game = getBowlersGame(bowler);
 
-        game.addFrame(new BowlingFrame(score1, score2));
+        if(score2 == 0){
+            game.getGame().addFrame(new BowlingFrame(score1));
+
+        }else{
+            game.getGame().addFrame(new BowlingFrame(score1, score2));
+
+        }
     }
 
     /**
@@ -88,8 +100,6 @@ public class ScoringAPIController {
      */
     public int getScore(Bowler bowler){
         bowling.GameManager game = getBowlersGame(bowler);
-
-        game.calculateScore();
 
         return game.getGame().getScore();
     }
@@ -105,6 +115,17 @@ public class ScoringAPIController {
         bowling.data.BowlingFrame bowlerFrame = game.retrieveFrame(frame);
 
         return bowlerFrame.getScore();
+    }
+
+    /**
+     * This method resets all games when called. This exists in case the user decides to replay games using the same
+     * members of a party.
+     *
+     */
+    public void resetGames(){
+        for(bowling.GameManager game : games){
+            game.getGame().clearFrames();
+        }
     }
 
 
