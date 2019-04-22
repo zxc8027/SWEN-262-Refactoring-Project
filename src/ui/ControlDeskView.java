@@ -73,7 +73,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
         controlsPanel.setLayout(new GridLayout(3, 1));
         controlsPanel.setBorder(new TitledBorder("Controls"));
 
-        addParty = new JButton("Add model.Party");
+        addParty = new JButton("Add Party");
         JPanel addPartyPanel = new JPanel();
         addPartyPanel.setLayout(new FlowLayout());
         addParty.addActionListener(this);
@@ -96,7 +96,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
         // model.lane.Lane Status Panel
         JPanel laneStatusPanel = new JPanel();
         laneStatusPanel.setLayout(new GridLayout(numLanes, 1));
-        laneStatusPanel.setBorder(new TitledBorder("model.lane.Lane Status"));
+        laneStatusPanel.setBorder(new TitledBorder("Lane Status"));
 
         HashSet lanes=controlDesk.getLanes();
         Iterator it = lanes.iterator();
@@ -107,14 +107,14 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
             curLane.subscribe(laneStat);
             ((Pinsetter)curLane.getPinsetter()).subscribe(laneStat);
             JPanel lanePanel = laneStat.showLane();
-            lanePanel.setBorder(new TitledBorder("model.lane.Lane" + ++laneCount ));
+            lanePanel.setBorder(new TitledBorder("Lane" + ++laneCount ));
             laneStatusPanel.add(lanePanel);
         }
 
         // model.Party model.Queue Panel
         JPanel partyPanel = new JPanel();
         partyPanel.setLayout(new FlowLayout());
-        partyPanel.setBorder(new TitledBorder("model.Party model.Queue"));
+        partyPanel.setBorder(new TitledBorder("Party Queue"));
 
         Vector empty = new Vector();
         empty.add("(Empty)");
@@ -166,18 +166,6 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
      */
 
     public void actionPerformed(ActionEvent e){
-        /*
-        if (e.getSource().equals(addParty)) {
-            ui.AddPartyView addPartyWin = new ui.AddPartyView(this, maxMembers);
-        }
-        if (e.getSource().equals(assign)) {
-            controlDesk.assignLane();
-        }
-        if (e.getSource().equals(finished)) {
-            win.hide();
-            System.exit(0);
-        }*/
-
         // Get and run the event.
         UIEventHandler handler = this.eventHandlers.get(e.getSource());
         handler.handleEvent();

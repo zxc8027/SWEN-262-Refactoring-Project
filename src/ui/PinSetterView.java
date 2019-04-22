@@ -55,7 +55,7 @@ public class PinSetterView implements PinsetterObserver {
      */
     public PinSetterView ( int laneNum ){
 
-        frame = new JFrame ( "model.lane.Lane " + laneNum + ":" );
+        frame = new JFrame ( "Lane " + laneNum + ":" );
 
         Container cpanel = frame.getContentPane ( );
 
@@ -229,13 +229,4 @@ public class PinSetterView implements PinsetterObserver {
     public void hide(){
         frame.hide();
     }
-
-    /**
-     * Dont know why this main method is here. Maybe to test it? No idea. TODO remove this b*tch
-     * @param args dunno
-     */
-    //public static void main ( String args [] ){
-        //ui.PinSetterView pg = new ui.PinSetterView ( 1 );
-    //}
-
 }

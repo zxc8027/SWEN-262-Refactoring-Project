@@ -41,7 +41,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
         this.maxSize = max;
 
         // Create the frame.
-        this.win = new JFrame("Add model.Party");
+        this.win = new JFrame("Add Party");
         this.win.getContentPane().setLayout(new BorderLayout());
         ((JPanel) this.win.getContentPane()).setOpaque(false);
 
@@ -51,7 +51,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
         // Create the party Panel
         JPanel partyPanel = new JPanel();
         partyPanel.setLayout(new FlowLayout());
-        partyPanel.setBorder(new TitledBorder("Your model.Party"));
+        partyPanel.setBorder(new TitledBorder("Your Party"));
 
         this.party = new Vector();
         Vector empty = new Vector();
@@ -68,7 +68,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
         // Create the bowler data view.
         JPanel bowlerPanel = new JPanel();
         bowlerPanel.setLayout(new FlowLayout());
-        bowlerPanel.setBorder(new TitledBorder("model.Bowler Database"));
+        bowlerPanel.setBorder(new TitledBorder("Bowler Database"));
 
         try {
             bowlerdb = new Vector(BowlerFile.getBowlers());
@@ -89,7 +89,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(4, 1));
 
-        this.addPatron = new JButton("Add to model.Party");
+        this.addPatron = new JButton("Add to Party");
         JPanel addPatronPanel = new JPanel();
         addPatronPanel.setLayout(new FlowLayout());
         this.addPatron.addActionListener(this);
@@ -174,9 +174,9 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
     }
 
     /**
-     * Called by ui.eventhandlers.addparty.NewPatronView to notify ui.AddPartyView to update.
+     * Called by ui.NewPatronView to notify ui.AddPartyView to update.
      *
-     * @param newPatron the ui.eventhandlers.addparty.NewPatronView that called this method.
+     * @param newPatron the ui.NewPatronView that called this method.
      */
     public void updateNewPatron(NewPatronView newPatron){
         try {
@@ -192,7 +192,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
                 this.party.add(newPatron.getNick());
                 this.partyList.setListData(this.party);
             } else {
-                System.err.println( "A model.Bowler with that name already exists." );
+                System.err.println( "A Bowler with that name already exists." );
             }
         } catch (Exception e2) {
             System.err.println("File I/O Error");

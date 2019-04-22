@@ -1,6 +1,7 @@
 package ui.eventhandlers.addparty;
 
 import ui.AddPartyView;
+import ui.NewPatronView;
 import ui.eventhandlers.UIEventHandler;
 
 /**

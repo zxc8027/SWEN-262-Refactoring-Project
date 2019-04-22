@@ -1,10 +1,10 @@
-package ui.eventhandlers.addparty;/* ui.AddPartyView.java
+package ui;/* ui.AddPartyView.java
  *
  *  Version
  *  $Id$
  *
  *  Revisions:
- *      $Log: ui.eventhandlers.addparty.NewPatronView.java,v $
+ *      $Log: ui.NewPatronView.java,v $
  *      Revision 1.3  2003/02/02 16:29:52  ???
  *      Added controller.ControlDeskEvent and controller.ControlDeskObserver. Updated model.Queue to allow access to Vector so that contents could be viewed without destroying. Implemented observer model for most of ControlDesk.
  *
