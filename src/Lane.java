@@ -131,6 +131,7 @@
  *
  */
 
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -143,6 +144,11 @@ import java.util.Date;
  * This class represents the entirety of a single late. Keeps track of each turn made,
  * the current players, the status of the game, and all sorts of other stuff. This is too big a class.
  * Will be refactored into a pattern and subclasses to remove the work this class does
+ *
+ * Uses a bowling score api from this library:
+ * https://github.com/dgestep/bowling-score-keeper
+ *
+ * All code credit within the bowling package goes to him
  */
 public class Lane extends Thread implements PinsetterObserver {
     private Party party; //the party that is using this lane
@@ -161,11 +167,14 @@ public class Lane extends Thread implements PinsetterObserver {
     private boolean tenthFrameStrike; //whether the frame has been a strike or not
 
     private int[] curScores; //the current scores of each of the bowlers
-    private int[][] cumulScores; //the cumulative scores of each of the bowlers
+    private int[][] cumulScores; //the cumulative scores of each of the bowlers,
+                // first param is the bowler, second is the frame.
     private boolean canThrowAgain; //whether the current bowler can throw again.
 
     private int[][] finalScores; //the final scores of each bowler in the lane
     private int gameNumber; //the game number (number of games the lane has)
+
+    private ScoringAPIController apiController;
 
     private Bowler currentThrower;          // = the thrower who just took a throw
 
@@ -321,7 +330,7 @@ public class Lane extends Thread implements PinsetterObserver {
                     //publish( lanePublish() );
                 }
 
-                if (pe.getThrowNumber() == 3) {
+                if (pe.getThrowNumber() == 3) { // if the throw number is over 2, cannot throw again
                     canThrowAgain = false;
                     //publish( lanePublish() );
                 }
@@ -389,11 +398,14 @@ public class Lane extends Thread implements PinsetterObserver {
         resetBowlerIterator();
         partyAssigned = true;
 
+        apiController = new ScoringAPIController(theParty);
+
         curScores = new int[party.getMembers().size()];
         cumulScores = new int[party.getMembers().size()][10];
         finalScores = new int[party.getMembers().size()][128]; //Hardcoding a max of 128 games, bite me.
         gameNumber = 0;
 
+        apiController.resetGames();
         resetScores();
     }
 
@@ -411,7 +423,6 @@ public class Lane extends Thread implements PinsetterObserver {
         int index =  ( (frame - 1) * 2 + ball);
 
         curScore = (int[]) scores.get(Cur);
-
 
         curScore[ index - 1] = score;
         scores.put(Cur, curScore);
@@ -433,21 +444,26 @@ public class Lane extends Thread implements PinsetterObserver {
     /** getScore()
      *
      * Method that calculates a bowlers score. Could switch over to state based calculation
+     * Every time this method is called the new score is calculated. As of now it does not keep track
+     * of previous calculated scores
      *
      * @param Cur		The bowler that is currently up
-     * @param frame	The frame the current bowler is on
+     * @param frame	    The frame the current bowler is on
      *
      * @return			The bowlers total score
      */
-    private int getScore( Bowler Cur, int frame){
-        int[] curScore;
-        int strikeballs = 0;
-        int totalScore = 0;
+    private int sgetScore( Bowler Cur, int frame){
+        int[] curScore; //current score is the array of each ball score thrown.
+        int strikeballs = 0; //number of strike balls
+        int totalScore = 0; //total score
         curScore = (int[]) scores.get(Cur);
+
         for (int i = 0; i != 10; i++) {
-            cumulScores[bowlIndex][i] = 0;
+            cumulScores[bowlIndex][i] = 0; //cumulScores is the array list of scores for the bowler,
         }
+
         int current = 2*(frame - 1)+ball-1;
+
         //Iterate through each ball until the current one.
         for (int i = 0; i != current+2; i++) {
             //Spare:
@@ -542,6 +558,125 @@ public class Lane extends Thread implements PinsetterObserver {
         return totalScore;
     }
 
+    /**
+     * New Implementation of getScore, refactored to use the API for bowler scoring. Less cyclomatic complexity, as there is no
+     * for loop. Outsources scoring and score storing to api classes. Uses a ScoringAPIController as a facade to talk to api.
+     * This method only is used to calculate the score of the frame that we're on.
+     *
+     * Old method had to recalculate each new frame, because it reset it to 0, but
+     * the api does that already. Old method also reupdated each score for each frame
+     * however, the api we have adjusts frame scores when dealing with strikes/spares
+     *
+     * All we have to do is update the new array, and assign the calls for each
+     * previous score to calls for the past frames.
+     *
+     * @param currentBowler the bowler currently throwing
+     * @param frame the frame that is currently being bowled
+     * @return returns the total score for the bowler
+     */
+    private int getScore(Bowler currentBowler, int frame){
+        int[] currentScoreArray; //this is the array of each ball thrown for the current bowler
+        int currentScoreIndex; //the index for the last last ball thrown
+        int totalScore = 0;
+        boolean incompleteFrame = false;
+
+        frame -= 1;//zero-index frames
+
+        //this represents each number of pins bowled for each frame.
+        //0,1 is a frame, 2,3 is a frame, 4,5 is a frame, unless a strike was bowled,
+        currentScoreArray = (int[]) scores.get(currentBowler);
+        currentScoreIndex = 2*frame+ball;
+
+
+        //System.out.println(currentScoreArray[((frame*2)-1)-1] + ", " + currentScoreArray[((frame*2)-1)]);
+
+        //int current = 2*(frame -1)+ball-1; //the current ball we're bowling.
+        //if the current ball is at an odd index, we just finished the frame,
+        //if its not odd, but a 10, then we can just submit a strike frame and move on.
+        //so we can do some logic to see if its a spare, strike, or whatever
+
+        if(currentScoreArray[currentScoreIndex] == 10) {
+            //((frame * 2) - 1) is the last ball thrown in a frame, could be -1 too.
+            //((frame * 2) - 1) - 1) is the first ball thrown in a frame
+            //if the bowl is a -1, its a strike and we just submit a strike
+            //this is because a 10 is scored first ball, the second is -1.
+            apiController.addStrike(currentBowler);
+
+        }else if(ball == 1 && currentScoreArray[currentScoreIndex - 1] + currentScoreArray[currentScoreIndex] == 10){
+            //this compares the first bowled frame score to this bowled frame score
+            //if this is a spare, then we have to tell the api controller that
+            //a spare was scored.
+
+            apiController.addSpare(currentBowler,
+                    currentScoreArray[currentScoreIndex - 1],
+                    currentScoreArray[currentScoreIndex]);
+
+
+        }else if(ball == 2){
+            //if this is the last frame being bowled, then the ball can hit 2.
+            //if this is the case, then we need to tell the api that
+            //this is the last frame and that we wont need any more
+
+            apiController.addFrame(currentBowler,
+                    currentScoreArray[currentScoreIndex - 2],
+                    currentScoreArray[currentScoreIndex - 1]);
+            incompleteFrame = true;
+
+            totalScore = cumulScores[bowlIndex][frame];
+
+
+        }else{
+            //if nothing else triggers, then this is a regular bowl.
+            //this can do 2 things. if the ball is 0, then we submit
+            //a frame where the score is 0-9 in the first bit, and 0 in the second.
+            //if the ball is 1, then we submit a frame with (current-1, current)
+
+            if(ball == 0){
+                //this means the ball is the first one of the frame. Simply add this frame using a single bowl.
+//                apiController.addFrame(currentBowler, currentScoreArray[currentScoreIndex], 0);
+                if(frame != 10) {
+                    incompleteFrame = true;
+                }
+
+                //System.out.println(currentScoreArray[((frame*2)-1)]);
+
+            }
+
+            if(ball == 1){
+                //this means the ball is the last one of the frame, unless the if(ball == 2) was not triggered.
+                //Submit the frame to be completed and added to the game.
+                apiController.addFrame(currentBowler,
+                        currentScoreArray[currentScoreIndex - 1],
+                        currentScoreArray[currentScoreIndex]);
+
+                //System.out.println(currentScoreArray[((frame*2)-1)]);
+            }
+        }
+
+        for (int i = 0; i <= frame; i++) {
+            if(incompleteFrame && i == frame) {
+                cumulScores[bowlIndex][i] = currentScoreArray[currentScoreIndex];
+                if(i > 0) {
+                    cumulScores[bowlIndex][i] += apiController.getFrameScore(currentBowler, i - 1);
+                }
+            } if(i == frame) {
+                cumulScores[bowlIndex][i] = 0;
+            } else {
+                cumulScores[bowlIndex][i] = apiController.getFrameScore(currentBowler, i);
+            }
+        }
+
+        //System.out.println(cumulScores[bowlIndex][frame]);
+
+        //System.out.println(Arrays.toString(currentScoreArray));
+        //System.out.println(currentBowler.getNick() + " " + apiController.getScore(currentBowler));
+        //System.out.println(current);
+        //System.out.println(frame);
+
+        return totalScore;
+
+    }
+
     /** isPartyAssigned()
      *
      * checks if a party is assigned to this lane
@@ -550,6 +685,8 @@ public class Lane extends Thread implements PinsetterObserver {
      */
     public boolean isPartyAssigned(){
         return partyAssigned;
+        //System.out.println(Arrays.toString(currentScoreArray));
+        //System.out.println(Arrays.toString(currentScoreArray));
     }
 
     /** isGameFinished
